@@ -1,19 +1,14 @@
 #!/bin/bash
 set -e
 
-echo "=== Установка инструментов для компиляции C++ ==="
-apt-get update && apt-get install -y g++ make
-
-echo "=== Клонирование и компиляция ShashChess ==="
-git clone https://github.com/amchess/ShashChess.git
-cd ShashChess/src
-
-# Стандартная компиляция для C++ движков
-make -j build ARCH=x86-64-bmi2
-
-cp stockfish ../../
-cd ../..
-rm -rf ShashChess
-chmod +x ./stockfish
-# Обратите внимание: бинарник называется stockfish
+echo "=== Установка PlentyChess 7.0.0 ==="
+mkdir -p temp
+cd temp
+# Ссылка на официальный бинарник PlentyChess v7.0.0 для Linux
+wget -q https://github.com/Yoshie2000/PlentyChess/releases/download/v7.0.0/PlentyChess-7.0.0-linux.zip
+unzip -q PlentyChess-7.0.0-linux.zip
+cp PlentyChess-7.0.0-linux/PlentyChess ../engine
+cd ..
+rm -rf temp
+chmod +x ./engine
 exec gunicorn -k uvicorn.workers.UvicornWorker -b 0.0.0.0:$PORT engine:app
