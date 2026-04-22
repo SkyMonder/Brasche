@@ -1,20 +1,14 @@
 #!/bin/bash
 set -e
 
-echo "=== Установка Halogen 12 ==="
-mkdir -p temp
-cd temp
+echo "=== Установка GNU Chess ==="
+# Устанавливаем движок и книгу дебютов из официального репозитория.
+# Это гарантирует установку последней версии, совместимой с вашим окружением.
+apt-get update && apt-get install -y gnuchess gnuchess-book
 
-# Скачивание бинарника Halogen для Linux
-wget -q https://github.com/KierenP/Halogen/releases/download/v12/Halogen-12-linux.zip
-unzip -q Halogen-12-linux.zip
-
-# Копирование бинарного файла в корневую директорию
-cp Halogen-12-linux/Halogen ../engine
-
-cd ..
-rm -rf temp
+# Копируем бинарный файл в корень, чтобы наш Python-код мог его найти.
+cp /usr/games/gnuchess ./engine
 chmod +x ./engine
 
-# Запуск веб-сервера
+echo "=== Запуск GNU Chess ==="
 exec gunicorn -k uvicorn.workers.UvicornWorker -b 0.0.0.0:$PORT engine:app
