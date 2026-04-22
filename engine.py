@@ -9,8 +9,9 @@ def init_engine():
     engine = chess.engine.SimpleEngine.popen_uci("./berserk_engine")
     engine.configure({
         "Skill Level": 20,
-        "Hash": 32,
+        "Hash": 64,          # Умеренный размер для Render
         "Threads": 1,
+        "Contempt": 15,      # Агрессивная настройка (Berserk)
     })
 
 @app.on_event("startup")
