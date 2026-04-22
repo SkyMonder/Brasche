@@ -6,12 +6,17 @@ engine = None
 
 def init_engine():
     global engine
-    engine = chess.engine.SimpleEngine.popen_uci("./berserk_engine")
+    # Пытаемся найти бинарник: сначала berserk_engine (из start.sh), затем berserk
+    binary = "./berserk_engine"
+    if not os.path.exists(binary):
+        binary = "./berserk"
+    engine = chess.engine.SimpleEngine.popen_uci(binary)
     engine.configure({
         "Skill Level": 20,
-        "Hash": 64,          # Умеренный размер для Render
+        "Hash": 64,
         "Threads": 1,
-        "Contempt": 15,      # Агрессивная настройка (Berserk)
+        "Contempt": 15,      # агрессивный стиль
+        "Move Overhead": 50,
     })
 
 @app.on_event("startup")
