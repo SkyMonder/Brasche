@@ -6,12 +6,11 @@ engine = None
 
 def init_engine():
     global engine
-    # Путь к бинарнику из start.sh
     engine = chess.engine.SimpleEngine.popen_uci("./engine")
     engine.configure({
-        "Skill Level": 20,   # Максимальная сила
-        "Hash": 128,         # Больше хеш-памяти для глубины
-        "Threads": 1,        # Один поток для Render
+        "Skill Level": 20,
+        "Hash": 128,
+        "Threads": 1,
         "Move Overhead": 50,
     })
 
