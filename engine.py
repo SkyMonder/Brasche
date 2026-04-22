@@ -7,7 +7,7 @@ engine = None
 def init_engine():
     global engine
     engine = chess.engine.SimpleEngine.popen_uci("./engine")
-    # Стандартные настройки UCI, которые поддерживают все движки
+    # Увеличенный Hash для большей глубины (можно поставить 256, если память позволяет)
     engine.configure({
         "Skill Level": 20,
         "Hash": 256,
