@@ -1,20 +1,20 @@
 #!/bin/bash
 set -e
 
-echo "=== Установка Koivisto ==="
+echo "=== Установка Halogen 12 ==="
 mkdir -p temp
 cd temp
 
-# Скачиваем последнюю стабильную версию Koivisto для Linux
-wget -q https://github.com/Luecx/Koivisto/releases/download/v9.0/Koivisto-9.0-linux.zip
-unzip -q Koivisto-9.0-linux.zip
+# Скачивание бинарника Halogen для Linux
+wget -q https://github.com/KierenP/Halogen/releases/download/v12/Halogen-12-linux.zip
+unzip -q Halogen-12-linux.zip
 
-# Копируем бинарный файл в корневую директорию
-cp Koivisto-9.0-linux/Koivisto ../engine
+# Копирование бинарного файла в корневую директорию
+cp Halogen-12-linux/Halogen ../engine
 
 cd ..
 rm -rf temp
 chmod +x ./engine
 
-# Запускаем веб-сервер для связи с Lichess
+# Запуск веб-сервера
 exec gunicorn -k uvicorn.workers.UvicornWorker -b 0.0.0.0:$PORT engine:app
