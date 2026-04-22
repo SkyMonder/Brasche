@@ -1,12 +1,16 @@
 #!/bin/bash
 set -e
 
-echo "=== Установка движка из репозитория Stockfish ==="
+echo "=== Установка ShashChess 41.1 ==="
 mkdir -p temp
 cd temp
-wget -q https://github.com/official-stockfish/Stockfish/releases/download/sf_18/stockfish-ubuntu-x86-64-bmi2.tar
-tar -xf stockfish-ubuntu-x86-64-bmi2.tar
-cp stockfish/stockfish-ubuntu-x86-64-bmi2 ../engine
+
+# Скачивание и распаковка
+wget -q https://github.com/amchess/ShashChess/releases/download/41.1/ShashChess-41.1-linux.zip
+unzip -q ShashChess-41.1-linux.zip
+
+# Перемещение бинарника в корневую директорию
+cp ShashChess-41.1-linux/ShashChess ../engine
 cd ..
 rm -rf temp
 chmod +x ./engine
