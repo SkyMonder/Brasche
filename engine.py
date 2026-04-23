@@ -1,7 +1,24 @@
-import requests, urllib.parse, traceback
+import os, chess, chess.engine
 from fastapi import FastAPI, HTTPException
 
 app = FastAPI()
+engine = None
+
+def init_engine():
+    global engine
+    engine = chess.engine.SimpleEngine.popen_uci("./engine")
+    engine.configure({
+        "Skill Level": 20,
+        "Hash": 256,
+        "Threads": 1,
+        "Move Overhead": 50,
+        "MultiPV": 2,           # анализировать два лучших хода, выбирать агрессивный
+        "UCI_ShowWDL": True,    # показывать вероятности, влияет на выбор
+    })
+
+@app.on_event("startup")
+async def startup():
+    init_engine()
 
 @app.get("/health")
 def health():
@@ -11,16 +28,14 @@ def health():
 async def get_move(data: dict):
     try:
         fen = data.get("fen")
-        encoded = urllib.parse.quote(fen)
-        url = f"https://www.chessdb.cn/cdb.php?action=queryall&board={encoded}"
-        resp = requests.get(url, timeout=3.0)
-        if resp.status_code == 200:
-            moves = resp.json()
-            if moves:
-                # выбираем ход с максимальной оценкой
-                best = max(moves, key=lambda x: x.get('score', -9999))
-                return {"move": best['move']}
-        raise HTTPException(status_code=500, detail="No move")
+        move_time = data.get("move_time", 1.0)
+        board = chess.Board(fen)
+        # Используем анализ, чтобы выбрать ход с лучшей атакующей оценкой
+        analysis = engine.analyse(board, chess.engine.Limit(time=move_time), multipv=2)
+        best_move = analysis[0]['pv'][0] if analysis else None
+        if not best_move:
+            result = engine.play(board, chess.engine.Limit(time=move_time))
+            best_move = result.move
+        return {"move": best_move.uci() if best_move else None}
     except Exception as e:
-        print(traceback.format_exc())
         raise HTTPException(status_code=500, detail=str(e))
